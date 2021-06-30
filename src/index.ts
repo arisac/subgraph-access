@@ -59,12 +59,13 @@ export function handleRoleAdminChanged(event: RoleAdminChangedEvent): void {
 	let previous = new Role(event.params.previousAdminRole.toHex());
 
 	let ercType: String = "unknown"
-	let contractExists = AccessControl.load(contract.id)
-	if (contractExists !== null) {
-		ercType = contractExists.ercType
+	let contractExsits = AccessControl.load(contract.id)
+	if (contractExsits !== null) {
+		ercType = contractExsits.ercType
 	} else {
 		ercType = getErcType(IERC165.bind(event.address))
 	}
+	contract.ercType = ercType.toString()
 
 	contract.save();
 	role.save();
@@ -93,13 +94,14 @@ export function handleRoleGranted(event: RoleGrantedEvent): void {
 	let sender   = new Account(event.params.sender.toHex());
 	
 	let ercType: String = "unknown"
-	let contractExists = AccessControl.load(contract.id)
-	if (contractExists !== null) {
-		ercType = contractExists.ercType
+	let contractExsits = AccessControl.load(contract.id)
+	if (contractExsits !== null) {
+		ercType = contractExsits.ercType
 	} else {
 		ercType = getErcType(IERC165.bind(event.address))
 	}
-	
+	contract.ercType = ercType.toString()
+
 	contract.save();
 	role.save();
 	account.save();
@@ -129,14 +131,15 @@ export function handleRoleRevoked(event: RoleRevokedEvent): void {
 	let role     = new Role(event.params.role.toHex());
 	let account  = new Account(event.params.account.toHex());
 	let sender   = new Account(event.params.sender.toHex());
-	
+
 	let ercType: String = "unknown"
-	let contractExists = AccessControl.load(contract.id)
-	if (contractExists !== null) {
-		ercType = contractExists.ercType
+	let contractExsits = AccessControl.load(contract.id)
+	if (contractExsits !== null) {
+		ercType = contractExsits.ercType
 	} else {
 		ercType = getErcType(IERC165.bind(event.address))
 	}
+	contract.ercType = ercType.toString()
 
 	contract.save();
 	role.save();
