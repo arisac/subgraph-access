@@ -1,6 +1,6 @@
 specVersion: 0.0.2
 description: access-control
-repository: https://github.com/amxx/subgraphs
+repository: https://github.com/
 schema:
   file: ./schema.graphql
 dataSources:
