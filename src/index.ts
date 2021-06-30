@@ -1,4 +1,4 @@
-import { store } from '@graphprotocol/graph-ts'
+import { store, Bytes } from '@graphprotocol/graph-ts'
 
 import {
 	Account,
@@ -18,21 +18,60 @@ import {
 } from '../generated/AccessControl/AccessControl'
 
 import {
+	IERC165
+} from '../generated/AccessControl/IERC165'
+
+import {
 	events,
 	transactions,
 } from '@amxx/graphprotocol-utils'
+
+function toBytes(hexString: String): Bytes {
+	let result = new Uint8Array(hexString.length / 2);
+	for (let i = 0; i < hexString.length; i += 2) { 
+		result[i / 2] = parseInt(hexString.substr(i, 2), 16) as u32;
+	} 
+	return result as Bytes;
+}
+
+function supportsInterface(contract: IERC165, interfaceId: String, expected: boolean = true): boolean {
+	let supports = contract.try_supportsInterface(toBytes(interfaceId));
+	return !supports.reverted && supports.value == expected;
+}
+
+function getErcType(contract: IERC165): String {
+	if (supportsInterface(contract, "80ac58cd")) {
+		return "erc721"
+	}
+	if (supportsInterface(contract, "d9b67a26")) {
+		return "erc1155"
+	}
+	if (  supportsInterface(contract, "b0202a11") || (supportsInterface(contract, "4bbee2df") && supportsInterface(contract, "fb9ec8ce"))) {
+		return "erc1363"
+	}
+	return "unknown"
+}
 
 export function handleRoleAdminChanged(event: RoleAdminChangedEvent): void {
 	let contract = new AccessControl(event.address.toHex());
 	let role     = new Role(event.params.role.toHex());
 	let admin    = new Role(event.params.newAdminRole.toHex());
 	let previous = new Role(event.params.previousAdminRole.toHex());
+
+	let ercType: String = "unknown"
+	let contractExists = AccessControl.load(contract.id)
+	if (contractExists !== null) {
+		ercType = contractExists.ercType
+	} else {
+		ercType = getErcType(IERC165.bind(event.address))
+	}
+
 	contract.save();
 	role.save();
 	admin.save();
 	previous.save();
 
-	let accesscontrolrole      = new AccessControlRole(contract.id.concat('-').concat(role.id));
+	let accesscontrolrole      = new AccessControlRole(contract.id.concat('-').concat(role.id).concat('-'+ercType));
 	accesscontrolrole.contract = contract.id;
 	accesscontrolrole.role     = role.id;
 	accesscontrolrole.admin    = admin.id;
@@ -52,12 +91,21 @@ export function handleRoleGranted(event: RoleGrantedEvent): void {
 	let role     = new Role(event.params.role.toHex());
 	let account  = new Account(event.params.account.toHex());
 	let sender   = new Account(event.params.sender.toHex());
+	
+	let ercType: String = "unknown"
+	let contractExists = AccessControl.load(contract.id)
+	if (contractExists !== null) {
+		ercType = contractExists.ercType
+	} else {
+		ercType = getErcType(IERC165.bind(event.address))
+	}
+	
 	contract.save();
 	role.save();
 	account.save();
 	sender.save();
 
-	let accesscontrolrole      = new AccessControlRole(contract.id.concat('-').concat(role.id));
+	let accesscontrolrole      = new AccessControlRole(contract.id.concat('-').concat(role.id).concat('-'+ercType));
 	accesscontrolrole.contract = contract.id;
 	accesscontrolrole.role     = role.id;
 	accesscontrolrole.save()
@@ -81,12 +129,21 @@ export function handleRoleRevoked(event: RoleRevokedEvent): void {
 	let role     = new Role(event.params.role.toHex());
 	let account  = new Account(event.params.account.toHex());
 	let sender   = new Account(event.params.sender.toHex());
+	
+	let ercType: String = "unknown"
+	let contractExists = AccessControl.load(contract.id)
+	if (contractExists !== null) {
+		ercType = contractExists.ercType
+	} else {
+		ercType = getErcType(IERC165.bind(event.address))
+	}
+
 	contract.save();
 	role.save();
 	account.save();
 	sender.save();
 
-	let accesscontrolrole      = new AccessControlRole(contract.id.concat('-').concat(role.id));
+	let accesscontrolrole      = new AccessControlRole(contract.id.concat('-').concat(role.id).concat('-'+ercType));
 	accesscontrolrole.contract = contract.id;
 	accesscontrolrole.role     = role.id;
 	accesscontrolrole.save()
