@@ -1,0 +1,9 @@
+.DS_STORE
+node_modules/
+.env
+generated/
+artifacts/
+cache/
+deployments/localhost_*
+data/
+build/
