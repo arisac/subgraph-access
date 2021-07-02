@@ -115,6 +115,7 @@ export function handleRoleGranted(event: RoleGrantedEvent): void {
 	let accesscontrolrolemember               = new AccessControlRoleMember(accesscontrolrole.id.concat('-').concat(account.id));
 	accesscontrolrolemember.accesscontrolrole = accesscontrolrole.id
 	accesscontrolrolemember.account           = account.id
+	accesscontrolrolemember.timestamp         = event.block.timestamp;
 	accesscontrolrolemember.save()
 
 	let ev         = new RoleGranted(events.id(event));

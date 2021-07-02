@@ -34,6 +34,7 @@ type AccessControlRoleMember @entity {
 	id:                           ID!
 	accesscontrolrole:            AccessControlRole!
 	account:                      Account!
+	timestamp:                    BigInt!
 }
 
 type RoleAdminChanged implements Event @entity {
