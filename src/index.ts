@@ -4,6 +4,7 @@ import {
 	Account,
 	AccessControl,
 	Role,
+	AccessControlMember,
 	AccessControlRole,
 	AccessControlRoleMember,
 	RoleAdminChanged,
@@ -112,6 +113,20 @@ export function handleRoleGranted(event: RoleGrantedEvent): void {
 	accesscontrolrole.role     = role.id;
 	accesscontrolrole.save()
 
+	let accesscontrolmemberExsits = AccessControlMember.load(contract.id.concat('-').concat(account.id))
+	if (accesscontrolmemberExsits === null) {
+		let accesscontrolmember         = new AccessControlMember(contract.id.concat('-').concat(account.id));
+		accesscontrolmember.contract    = contract.id;
+		accesscontrolmember.account     = account.id;
+		accesscontrolmember.timestamp   = event.block.timestamp;
+		accesscontrolmember.count       = 1;
+		accesscontrolmember.save()
+	} else {
+		let accesscontrolmember = accesscontrolmemberExsits;
+		accesscontrolmember.count++;
+		accesscontrolmember.save()
+	}
+
 	let accesscontrolrolemember               = new AccessControlRoleMember(accesscontrolrole.id.concat('-').concat(account.id));
 	accesscontrolrolemember.accesscontrolrole = accesscontrolrole.id
 	accesscontrolrolemember.account           = account.id
@@ -151,6 +166,18 @@ export function handleRoleRevoked(event: RoleRevokedEvent): void {
 	accesscontrolrole.contract = contract.id;
 	accesscontrolrole.role     = role.id;
 	accesscontrolrole.save()
+
+	let accesscontrolmemberExsits = AccessControlMember.load(contract.id.concat('-').concat(account.id))
+	if (accesscontrolmemberExsits !== null) {
+		let accesscontrolmember = accesscontrolmemberExsits;
+		if (accesscontrolmember.count > 1) {
+			accesscontrolmember.count--;
+			accesscontrolmember.timestamp = event.block.timestamp;
+			accesscontrolmember.save()
+		} else {
+			store.remove('AccessControlMember', contract.id.concat('-').concat(account.id));
+		}
+	}
 
 	store.remove('AccessControlRoleMember', accesscontrolrole.id.concat('-').concat(account.id));
 
