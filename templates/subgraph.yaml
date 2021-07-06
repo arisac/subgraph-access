@@ -6,10 +6,10 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: AccessControl
-    network: mainnet
+    network: {{chainName}}
     source:
       abi: AccessControl
-      startBlock: 0
+      startBlock: {{startBlock}}
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4

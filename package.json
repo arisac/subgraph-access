@@ -3,13 +3,15 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
+    "generate": "node generate.js",
     "build:schema": "concat -o schema.graphql src/schema.gql node_modules/@amxx/graphprotocol-utils/schema.graphql",
     "build:codegen": "graph codegen subgraph.yaml",
     "build:compile": "graph build subgraph.yaml",
     "build:all": "yarn build:schema && yarn build:codegen && yarn build:compile"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "^3.4.0"
+    "@openzeppelin/contracts": "^3.4.0",
+    "handlebars": "^4.7.7"
   },
   "devDependencies": {
     "@amxx/graphprotocol-utils": "0.0.6-2",
