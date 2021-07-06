@@ -8,4 +8,4 @@ deployments/localhost_*
 data/
 build/
 
-./schema.graphql
+/schema.graphql
