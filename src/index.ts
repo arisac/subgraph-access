@@ -47,7 +47,7 @@ function getErcType(contract: IERC165): String {
 	if (supportsInterface(contract, "d9b67a26")) {
 		return "erc1155"
 	}
-	if (  supportsInterface(contract, "b0202a11") || (supportsInterface(contract, "4bbee2df") && supportsInterface(contract, "fb9ec8ce"))) {
+	if (supportsInterface(contract, "b0202a11") || (supportsInterface(contract, "4bbee2df") && supportsInterface(contract, "fb9ec8ce"))) {
 		return "erc1363"
 	}
 	return "unknown"
@@ -77,6 +77,7 @@ export function handleRoleAdminChanged(event: RoleAdminChangedEvent): void {
 	accesscontrolrole.contract = contract.id;
 	accesscontrolrole.role     = role.id;
 	accesscontrolrole.admin    = admin.id;
+	accesscontrolrole.ercType  = contract.ercType;
 	accesscontrolrole.save()
 
 	let ev               = new RoleAdminChanged(events.id(event));
@@ -111,7 +112,7 @@ export function handleRoleGranted(event: RoleGrantedEvent): void {
 	let accesscontrolrole      = new AccessControlRole(contract.id.concat('-').concat(role.id));
 	accesscontrolrole.contract = contract.id;
 	accesscontrolrole.role     = role.id;
-	accesscontrolrole.ercType  = ercType.toString();
+	accesscontrolrole.ercType  = contract.ercType;
 	accesscontrolrole.save()
 
 	let accesscontrolmemberExsits = AccessControlMember.load(contract.id.concat('-').concat(account.id))
@@ -132,7 +133,7 @@ export function handleRoleGranted(event: RoleGrantedEvent): void {
 	let accesscontrolrolemember               = new AccessControlRoleMember(accesscontrolrole.id.concat('-').concat(account.id));
 	accesscontrolrolemember.accesscontrolrole = accesscontrolrole.id;
 	accesscontrolrolemember.account           = account.id;
-	accesscontrolrolemember.ercType           = ercType.toString();
+	accesscontrolrolemember.ercType           = contract.ercType;
 	accesscontrolrolemember.timestamp         = event.block.timestamp;
 	accesscontrolrolemember.save()
 
