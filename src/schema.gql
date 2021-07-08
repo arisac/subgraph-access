@@ -26,6 +26,7 @@ type AccessControlRole @entity {
 	role:                         Role!
 	admin:                        Role
 	members:                      [AccessControlRoleMember!]! @derivedFrom(field: "accesscontrolrole")
+	ercType:                      String!
 	roleGranted:                  [RoleGranted!]! @derivedFrom(field: "role")
 	roleRevoked:                  [RoleRevoked!]! @derivedFrom(field: "role")
 	roleAdminChanged:             [RoleAdminChanged!]! @derivedFrom(field: "role")
@@ -35,6 +36,7 @@ type AccessControlRoleMember @entity {
 	id:                           ID!
 	accesscontrolrole:            AccessControlRole!
 	account:                      Account!
+	ercType:                      String!
 	timestamp:                    BigInt!
 }
 
@@ -43,6 +45,7 @@ type AccessControlMember @entity {
 	contract:           		      AccessControl!
 	account:                      Account!
 	timestamp:                    BigInt!
+	ercType:                      String!
 	count:                        Int!
 }
 

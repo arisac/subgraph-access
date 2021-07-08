@@ -73,7 +73,7 @@ export function handleRoleAdminChanged(event: RoleAdminChangedEvent): void {
 	admin.save();
 	previous.save();
 
-	let accesscontrolrole      = new AccessControlRole(contract.id.concat('-').concat(role.id).concat('-'+ercType));
+	let accesscontrolrole      = new AccessControlRole(contract.id.concat('-').concat(role.id));
 	accesscontrolrole.contract = contract.id;
 	accesscontrolrole.role     = role.id;
 	accesscontrolrole.admin    = admin.id;
@@ -108,9 +108,10 @@ export function handleRoleGranted(event: RoleGrantedEvent): void {
 	account.save();
 	sender.save();
 
-	let accesscontrolrole      = new AccessControlRole(contract.id.concat('-').concat(role.id).concat('-'+ercType));
+	let accesscontrolrole      = new AccessControlRole(contract.id.concat('-').concat(role.id));
 	accesscontrolrole.contract = contract.id;
 	accesscontrolrole.role     = role.id;
+	accesscontrolrole.ercType  = ercType.toString();
 	accesscontrolrole.save()
 
 	let accesscontrolmemberExsits = AccessControlMember.load(contract.id.concat('-').concat(account.id))
@@ -120,6 +121,7 @@ export function handleRoleGranted(event: RoleGrantedEvent): void {
 		accesscontrolmember.account     = account.id;
 		accesscontrolmember.timestamp   = event.block.timestamp;
 		accesscontrolmember.count       = 1;
+		accesscontrolmember.ercType     = ercType.toString();
 		accesscontrolmember.save()
 	} else {
 		let accesscontrolmember = accesscontrolmemberExsits;
@@ -128,8 +130,9 @@ export function handleRoleGranted(event: RoleGrantedEvent): void {
 	}
 
 	let accesscontrolrolemember               = new AccessControlRoleMember(accesscontrolrole.id.concat('-').concat(account.id));
-	accesscontrolrolemember.accesscontrolrole = accesscontrolrole.id
-	accesscontrolrolemember.account           = account.id
+	accesscontrolrolemember.accesscontrolrole = accesscontrolrole.id;
+	accesscontrolrolemember.account           = account.id;
+	accesscontrolrolemember.ercType           = ercType.toString();
 	accesscontrolrolemember.timestamp         = event.block.timestamp;
 	accesscontrolrolemember.save()
 
@@ -162,7 +165,7 @@ export function handleRoleRevoked(event: RoleRevokedEvent): void {
 	account.save();
 	sender.save();
 
-	let accesscontrolrole      = new AccessControlRole(contract.id.concat('-').concat(role.id).concat('-'+ercType));
+	let accesscontrolrole      = new AccessControlRole(contract.id.concat('-').concat(role.id));
 	accesscontrolrole.contract = contract.id;
 	accesscontrolrole.role     = role.id;
 	accesscontrolrole.save()
