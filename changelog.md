@@ -1,3 +1,13 @@
+# v1.1.0
+
+- change schema: ercType
+  - add ercType field and remove ercType from id field in:
+    - AccessControlRole
+    - AccessControlRoleMember
+    - AccessControlMember
+- upgrade compatibility:
+  - not compatible with v1.0.0
+
 # v1.0.0
 
 - add ercType
