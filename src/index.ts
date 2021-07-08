@@ -152,15 +152,6 @@ export function handleRoleRevoked(event: RoleRevokedEvent): void {
 	let account  = new Account(event.params.account.toHex());
 	let sender   = new Account(event.params.sender.toHex());
 
-	let ercType: String = "unknown"
-	let contractExsits = AccessControl.load(contract.id)
-	if (contractExsits !== null) {
-		ercType = contractExsits.ercType
-	} else {
-		ercType = getErcType(IERC165.bind(event.address))
-	}
-	contract.ercType = ercType.toString()
-
 	contract.save();
 	role.save();
 	account.save();
