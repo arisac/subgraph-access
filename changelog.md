@@ -1,3 +1,7 @@
+# v1.1.1
+
+- fix missing accesscontrolrole.ercType
+
 # v1.1.0
 
 - change schema: ercType
